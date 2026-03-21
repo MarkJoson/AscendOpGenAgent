@@ -85,14 +85,13 @@ Agent 接收到指令后，将自动执行以下流程：确认参数 → 提取
 
 **Prompt 示例 1：基础评测**（仅指定目标与测试范围）
 ```text
-请评估 akg_triton agent (/path/to/AscendOpGenAgent) 在 kernelbench (/path/to/KernelBench) 上的效果。
-仅评测 Level 1 的 problem_id=[6] 和 Level 2 的 problem_id=[2]。
+评测KernelBench中level1的[20,30]任务,agent_workspace是<path/to/your/AscendOpGenAgent>,使用<AKG-triton> agent
 ```
 
 **Prompt 示例 2：进阶评测**（指定输出路径、运行设备及权限）
 ```text
-请评估 akg_triton agent (/path/to/AscendOpGenAgent) 在 kernelbench (/path/to/KernelBench) 上的效果。
-仅评测 Level 1 的 problem_id=[6] 和 Level 2 的 problem_id=[2]。
+执行KernelBench评测,agent_workspace是<path/to/your/AscendOpGenAgent>,使用<AKG-triton> agent。
+评测 Level 1 的 problem_id=[6] 和 Level 2 的 problem_id=[2]。
 请将生成的代码和评测结果输出到 /path/to/output 目录下。
 执行期间默认同意所有权限，并指定设备 ASCEND_RT_VISIBLE_DEVICES=10。
 ```

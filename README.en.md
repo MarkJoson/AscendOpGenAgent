@@ -85,16 +85,12 @@ Suitable for evaluating the overall code generation capability of the Agent on s
 
 **Prompt Example 1: Basic Evaluation** (Only specify target and test scope)
 ```text
-Please evaluate the performance of the akg_triton agent (/path/to/AscendOpGenAgent) on kernelbench (/path/to/KernelBench).
-Only evaluate problem_id=[6] in Level 1 and problem_id=[2] in Level 2.
+Evaluate tasks [20,30] of level 1 in KernelBench, with agent_workspace set to <path/to/your/AscendOpGenAgent>, using the <AKG-triton> agent.
 ```
 
 **Prompt Example 2: Advanced Evaluation** (Specify output path, running device, and permissions)
 ```text
-Please evaluate the performance of the akg_triton agent (/path/to/AscendOpGenAgent) on kernelbench (/path/to/KernelBench).
-Only evaluate problem_id=[6] in Level 1 and problem_id=[2] in Level 2.
-Please output the generated code and evaluation results to the /path/to/output directory.
-Automatically grant all permissions during execution, and specify the device ASCEND_RT_VISIBLE_DEVICES=10.
+Run KernelBench evaluation with the <AKG-triton> agent (workspace: <path/to/your/AscendOpGenAgent>). Target Level 1 problem_id=[6] and Level 2 problem_id=[2]. Save the generated code and results to /path/to/output. Automatically approve all permissions during execution, and specify the device ASCEND_RT_VISIBLE_DEVICES=10.
 ```
 
 **Parameter Description**:

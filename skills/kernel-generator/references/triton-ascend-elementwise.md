@@ -98,3 +98,42 @@ def optimized_elementwise(input_ptr, output_ptr, n_elements, BLOCK_SIZE: tl.cons
 ```
 
 编译器会自动将核内 for 循环进行多级流水处理。
+
+### 5. 标量操作 Tile 向量化（Ascend 特有）
+
+对于每个 Block 仅处理 1 个元素的标量 kernel，在 Ascend NPU 上必须做 Tile 化。NPU 的向量单元处理 1 个元素是极端浪费。
+
+```python
+# 修改前：每个 Block 处理 1 个元素
+@triton.jit
+def scalar_kernel(ptr, ...):
+    idx = tl.program_id(0)
+    val = tl.load(ptr + idx)
+    # ...
+
+# 修改后：每个 Block 处理 BATCH_BLOCK 个元素
+@triton.jit
+def vectorized_kernel(ptr, ..., BATCH_BLOCK: tl.constexpr):
+    base = tl.program_id(0) * BATCH_BLOCK
+    idx = base + tl.arange(0, BATCH_BLOCK)
+    val = tl.load(ptr + idx)
+    # ...
+
+# Grid 从 (N,) 改为 (N // BATCH_BLOCK,)
+```
+
+BATCH_BLOCK 典型取值：8, 16, 32。详见 `triton-ascend-optimization-techniques.md` 技巧 4。
+
+### 6. 无分支算术替代 tl.where（Ascend 特有）
+
+当 `tl.where(cond, value, 0)` 的 else 分支为零时，用乘法替代：
+
+```python
+# 修改前
+result = tl.where(is_valid, value, 0)
+
+# 修改后
+result = value * is_valid    # is_valid 为布尔值，自动转为 0/1
+```
+
+详见 `triton-ascend-optimization-techniques.md` 技巧 5。

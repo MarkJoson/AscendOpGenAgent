@@ -74,3 +74,18 @@ for start_n in range(0, seq_len, BLOCK_SIZE):
 # 最终归一化
 acc = acc / l_i
 ```
+
+### Ascend NPU 适配：-inf 保护
+
+在 Ascend 上实现 Online Softmax 时，必须在 `tl.exp` 之后加入 `-inf` 保护。否则当 `m_i` 或 `m_ij` 为 `-inf` 时会产生 NaN。
+
+```python
+# 在每次更新 p 和 alpha 之后，紧跟以下保护：
+p = tl.exp(scores - m_ij)
+p = tl.where(m_ij[:, None] == float("-inf"), 0.0, p)      # 必须加
+
+alpha = tl.exp(m_i - m_ij)
+alpha = tl.where(m_i == float("-inf"), 0.0, alpha)          # 必须加
+```
+
+详见 `triton-ascend-optimization-techniques.md` 技巧 1。
